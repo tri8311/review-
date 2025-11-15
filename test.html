@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thư viện Ảnh Tương tác - Accessible</title>
+
+    <style>
+        /* CSS */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        #image {
+            width: 600px;
+            height: 400px;
+            margin: 0 auto 30px;
+            line-height: 400px; 
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            border: 5px solid #0056b3;
+            background-color: #e0e0e0;
+            background-image: url('');
+            transition: background-image 0.5s, color 0.5s;
+            background-size: cover;
+            background-position: center;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .preview-container {
+            display: flex;
+            flex-wrap: wrap; /* Cho phép xuống dòng nếu cần */
+            justify-content: center;
+            gap: 15px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .preview {
+            width: 150px;
+            height: 100px;
+            border: 2px solid #ccc;
+            cursor: pointer;
+            transition: border-color 0.3s, transform 0.2s;
+            border-radius: 4px;
+            /* Thêm kiểu dáng focus để kiểm tra A11Y */
+            outline: none; 
+        }
+
+        /* Thêm viền màu xanh khi được focus (dùng cho bàn phím) */
+        .preview:hover, .preview:focus {
+            border-color: #00a0b3;
+            transform: scale(1.05);
+            box-shadow: 0 0 5px #00a0b3;
+        }
+    </style>
+</head>
+<body onload="addTabFocus()"> 
+
+    <h1>Thư Viện Ảnh Tương tác (A11Y Demo)</h1>
+    
+    <div id="image">
+        Di chuột qua hoặc dùng phím Tab/Enter để tập trung vào một hình ảnh bên dưới.
+    </div>
+
+    <div class="preview-container">
+        <img class="preview" alt="Sương mù bao phủ ngọn núi" src="https://picsum.photos/id/10/200/100" 
+             onmouseover="upDate(this)" onmouseout="unDo()"
+             onfocus="upDate(this)" onblur="unDo()">
+        
+        <img class="preview" alt="Đàn chim bay trên bầu trời hoàng hôn" src="https://picsum.photos/id/161/200/100" 
+             onmouseover="upDate(this)" onmouseout="unDo()"
+             onfocus="upDate(this)" onblur="unDo()">
+        
+        <img class="preview" alt="Bình minh trên biển cát" src="https://picsum.photos/id/178/200/100" 
+             onmouseover="upDate(this)" onmouseout="unDo()"
+             onfocus="upDate(this)" onblur="unDo()">
+
+        <img class="preview" alt="Những chiếc thuyền neo đậu dưới ánh nắng" src="https://picsum.photos/id/157/200/100" 
+             onmouseover="upDate(this)" onmouseout="unDo()"
+             onfocus="upDate(this)" onblur="unDo()">
+
+        <img class="preview" alt="Con đường lát đá cổ kính" src="https://picsum.photos/id/21/200/100" 
+             onmouseover="upDate(this)" onmouseout="unDo()"
+             onfocus="upDate(this)" onblur="unDo()">
+
+        <img class="preview" alt="Chiếc đồng hồ cổ điển" src="https://picsum.photos/id/350/200/100" 
+             onmouseover="upDate(this)" onmouseout="unDo()"
+             onfocus="upDate(this)" onblur="unDo()">
+    </div>
+
+    <script>
+        /* JavaScript */
+
+        // Hàm được gọi khi onload
+        function addTabFocus() {
+            // Thêm thông báo console.log để đảm bảo sự kiện kích hoạt
+            console.log("Sự kiện 'onload' đã kích hoạt. Bắt đầu thiết lập Tabindex.");
+
+            // Lấy tất cả các hình ảnh có class 'preview'
+            var images = document.querySelectorAll('.preview');
+            
+            // Viết một vòng lặp for để lặp qua từng hình ảnh
+            for (var i = 0; i < images.length; i++) {
+                // Thêm thuộc tính tabindex để cho phép focus bằng bàn phím (nếu chưa có)
+                // Lưu ý: Trong HTML ở trên đã thêm tabindex="0", phần này chỉ mang tính chất minh họa JS
+                if (!images[i].hasAttribute('tabindex')) {
+                    images[i].setAttribute('tabindex', '0');
+                }
+                console.log("Hình ảnh " + (i + 1) + " đã có tabindex: " + images[i].getAttribute('tabindex'));
+            }
+            console.log("Thiết lập Tabindex hoàn tất.");
+        }
+
+        /* Hàm upDate: Thay đổi hình nền và văn bản của div #image */
+        function upDate(previewPic) {
+            // Lấy phần tử xem trước chính
+            var bigImage = document.getElementById('image');
+
+            // Ghi lại sự kiện focus/hover
+            if (event.type === 'focus') {
+                 console.log("Sự kiện 'onfocus' (Bàn phím) đã kích hoạt.");
+            } else if (event.type === 'mouseover') {
+                 console.log("Sự kiện 'onmouseover' (Chuột) đã kích hoạt.");
+            }
+            
+            console.log("Alt của ảnh: " + previewPic.alt);
+            
+            // Thay đổi văn bản
+            bigImage.innerHTML = previewPic.alt;
+
+            // Thay đổi hình nền
+            bigImage.style.backgroundImage = "url('" + previewPic.src + "')";
+            bigImage.style.color = "transparent"; 
+        }
+
+        /* Hàm unDo: Khôi phục hình nền và văn bản về trạng thái ban đầu */
+        function unDo() {
+            // Ghi lại sự kiện blur/mouseout
+             if (event.type === 'blur') {
+                 console.log("Sự kiện 'onblur' (Bàn phím) đã kích hoạt.");
+            } else if (event.type === 'mouseout') {
+                 console.log("Sự kiện 'onmouseout' (Chuột) đã kích hoạt.");
+            }
+
+            // Lấy phần tử xem trước chính
+            var bigImage = document.getElementById('image');
+
+            // Khôi phục hình nền
+            bigImage.style.backgroundImage = "url('')";
+            
+            // Khôi phục văn bản
+            bigImage.innerHTML = "Di chuột qua hoặc dùng phím Tab/Enter để tập trung vào một hình ảnh bên dưới.";
+            bigImage.style.color = "#333"; 
+        }
+    </script>
+</body>
+</html>
